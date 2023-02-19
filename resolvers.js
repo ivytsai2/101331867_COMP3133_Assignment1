@@ -86,34 +86,28 @@ exports.resolvers = {
         },
         updateEmployeeById: async (parent, args) => {
             try {
-                await Employee.findByIdAndUpdate(
-                    args.id,
-                    {
-                        $set: {
-                            firstname: args.firstname,
-                            lastname: args.lastname,
-                            email: args.email,
-                            gender: args.gender,
-                            salary: args.salary
-                        }
-                    }, {new: true}, (err, employee) => {
-                        if (err)
-                        {
-                            return {
-                                status: false,
-                                message: `Sonething went wrong when updating employee id ${employee.id}`,
-                                employee: null
-                            }
-                        } else 
-                        {
-                            return {
-                                status: true,
-                                message: `Employee id ${employee.id} info has been updated`,
-                                employee: employee
-                            }
-                        }
-                    }
-                )
+                const emp = await Employee.findById(args.id)
+                if (args.firstname) {
+                    emp.firstname = args.firstname
+                }
+                if (args.lastname) {
+                    emp.lastname = args.lastname
+                }
+                if (args.email) {
+                    emp.email = args.email
+                }
+                if (args.gender) {
+                    emp.gender = args.gender
+                }
+                if (args.salary) {
+                    emp.salary = args.salary
+                }
+                await emp.save()
+                return {
+                    status: true,
+                    message: `Employee id ${emp.id} has been updated`,
+                    employee: emp
+                }
             } catch (e) {
                 return {
                     status: false,

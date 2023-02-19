@@ -44,11 +44,11 @@ exports.typeDefs = gql `
         ): empResponse
         updateEmployeeById(
             id: ID!
-            firstname: String!
-            lastname: String!
-            email: String!
-            gender: String!
-            salary: Float!): empResponse
+            firstname: String
+            lastname: String
+            email: String
+            gender: String
+            salary: Float): empResponse
         deleteEmployeeById(id: ID!): empResponse
     }
 `
