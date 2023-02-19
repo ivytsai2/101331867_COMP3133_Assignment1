@@ -15,29 +15,40 @@ exports.typeDefs = gql `
         email: String!
         password: String!
     },
+    type empResponse {
+        status: Boolean!
+        message: String!
+        employee: Employee
+    },
+    type userResponse {
+        status: Boolean!
+        message: String!
+        user: User
+    },
     type Query {
-        login(email: String!, password: String!): User
+        login(email: String!, password: String!): userResponse
         getEmployees: [Employee]
-        getEmployeeById(id: ID!): Employee
+        getEmployeeById(id: ID!): empResponse
     },
     type Mutation {
         signUp(
             username: String!
             email: String!
-            password: String!): User 
+            password: String!): userResponse
         addEmployee(
             firstname: String!
             lastname: String!
             email: String!
-            gender: String!
-            salary: Float!): Employee
+            gender: String
+            salary: Float
+        ): empResponse
         updateEmployeeById(
             id: ID!
             firstname: String!
             lastname: String!
             email: String!
             gender: String!
-            salary: Float!): Employee
-        deleteEmployeeById(id: ID!): Employee
+            salary: Float!): empResponse
+        deleteEmployeeById(id: ID!): empResponse
     }
 `
