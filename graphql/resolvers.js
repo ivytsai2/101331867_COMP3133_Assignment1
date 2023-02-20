@@ -1,20 +1,40 @@
-const Employee = require('./models/Employee');
-const User = require('./models/User');
+const Employee = require('../models/Employee');
+const User = require('../models/User');
+const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
+const { ApolloError } = require('apollo-server-errors');
 
 exports.resolvers = { 
     Query: {
         login: async (parent, args) => {
             try {
-                const user = await User.findOne({email: args.email, password: args.password})
-                return {
-                    status: true,
-                    message: `Welcome back ${user.username}`,
-                    user: user
-                }
+                const user = await User.findOne({email: args.email})
+                // decrpyt password and check if password is correct 
+                if (user && (await bcrypt.compare(args.password, user.password))) {
+                    // Create token with the username in the payload and expires after 2hrs
+                    const jwtKey = "my_secret_key";
+                    myToken = jwt.sign(
+                        { user: args.username },
+                        jwtKey,
+                        { expiresIn: "2h" }
+                    );
+                    return {
+                        status: true,
+                        message: `Welcome back ${user.username}`,
+                        user: user,
+                        token: myToken
+                    }
+                } else {
+                        return {
+                            status: false,
+                            message: "Wrong password",
+                            user: null
+                        }
+                    }
             } catch (e) {
                 return {
                     status: false,
-                    message: "Wrong email or password",
+                    message: e.message,
                     user: null
                 }
             }
@@ -41,24 +61,23 @@ exports.resolvers = {
     },
     Mutation: {
         signUp: async (parent, args) => {
-            try {
-                const newUser = new User({
-                    username: args.username,
-                    email: args.email,
-                    password: args.password 
-                })
-                await newUser.save()
-                return {
-                    status: true,
-                    message: "New user created successfully",
-                    user: newUser
-                }
-            } catch (e) {
-                return {
-                    status: false,
-                    message: e.message,
-                    user: null
-                }
+            // check if user already exist
+            const oldUser = await User.findOne({email: args.email});
+            if (oldUser) {
+                throw new ApolloError('This email is already registered, please login', 'USER_ALREADY_EXISTS')
+            }
+            // encrpyt password
+            const encryptedPassword = await bcrypt.hash(args.password, 10);
+            const newUser = new User({
+                username: args.username,
+                email: args.email,
+                password: encryptedPassword 
+            })
+            await newUser.save()
+            return {
+                status: true,
+                message: "New user created successfully",
+                user: newUser
             }
         },
         addEmployee: async (parent, args) => {
@@ -121,7 +140,7 @@ exports.resolvers = {
                 const emp = await Employee.findByIdAndDelete(args.id)
                 return {
                     status: true,
-                    message: `Employee ${emp.firstname} ${emp.lastname} deleted successfully`,
+                    message: `Employee id ${args.id} deleted successfully`,
                     employee: emp
                 }
             } catch (e) {

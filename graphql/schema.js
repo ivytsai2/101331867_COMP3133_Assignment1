@@ -14,7 +14,7 @@ exports.typeDefs = gql `
         username: String!
         email: String!
         password: String!
-    },
+    }
     type empResponse {
         status: Boolean!
         message: String!
@@ -24,6 +24,7 @@ exports.typeDefs = gql `
         status: Boolean!
         message: String!
         user: User
+        token: String
     },
     type Query {
         login(email: String!, password: String!): userResponse
@@ -34,7 +35,8 @@ exports.typeDefs = gql `
         signUp(
             username: String!
             email: String!
-            password: String!): userResponse
+            password: String!
+        ): userResponse
         addEmployee(
             firstname: String!
             lastname: String!

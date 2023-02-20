@@ -7,8 +7,8 @@ const cors = require('cors');
 const { ApolloServer } = require('apollo-server-express');
 
 //import typedefs and resolvers
-const TypeDefs = require('./schema')
-const Resolvers = require('./resolvers')
+const TypeDefs = require('./graphql/schema')
+const Resolvers = require('./graphql/resolvers')
 
 //Store sensitive information to env variables
 const dotenv = require('dotenv');
