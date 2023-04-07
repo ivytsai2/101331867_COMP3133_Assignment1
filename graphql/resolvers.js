@@ -129,6 +129,7 @@ exports.resolvers = {
                             throw new ApolloError('This email is already registered', 'EMAIL_ALREADY_EXISTS')
                         }
                     }
+                    emp.email = args.email
                 }
                 if (args.firstname) {
                     emp.firstname = args.firstname
