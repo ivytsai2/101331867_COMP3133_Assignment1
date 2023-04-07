@@ -27,7 +27,7 @@ const EmployeeSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    required: [true, 'Please enter gender'],
+    required: [true, 'Please select gender'],
     enum: ['male', 'female', 'other'],
     default: 'other',
     trim: true,
